@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import { LitElement, html, css } from 'lit-element';
 import { styleMap } from 'lit-html/directives/style-map.js';
 
@@ -6,9 +7,11 @@ export class BreakOutGame extends LitElement {
     return {
       title: { type: String },
       subtitle: { type: String },
-      author: {type: String},
+      author: { type: String },
       gameWidth: { type: Number, attribute: 'game-width' },
       gameHeight: { type: Number, attribute: 'game-height' },
+
+      bricks: { type: Array },
     };
   }
 
@@ -38,6 +41,7 @@ export class BreakOutGame extends LitElement {
 
       main {
         background-color: black;
+        position: relative;
       }
 
       .app-footer {
@@ -50,7 +54,7 @@ export class BreakOutGame extends LitElement {
       }
 
       h1 {
-        font-size: 24px
+        font-size: 24px;
       }
 
       p {
@@ -59,36 +63,44 @@ export class BreakOutGame extends LitElement {
     `;
   }
 
-   get _headerTemplate() {
+  get _headerTemplate() {
     return html`
       <header>
-        <h1>${ this.title }</h1>
-        <p>${ this.subtitle }</p>
+        <h1>${this.title}</h1>
+        <p>${this.subtitle}</p>
       </header>
     `;
-   }
-   
+  }
+
   get _gameTemplate() {
     const gameStyle = {
-      width: `${ this.gameWidth }px`,
-      height: `${ this.gameHeight }px`
+      width: `${this.gameWidth}px`,
+      height: `${this.gameHeight}px`,
     };
-    return html`<main style=${ styleMap(gameStyle)}></main>`;
+    return html` <main style=${styleMap(gameStyle)}>
+      ${this.bricks.map(brick => this._renderBrick(brick))}
+    </main>`;
   }
 
   get _footerTemplate() {
+    return html` <p class="app-footer">${this.author}</p> `;
+  }
+
+  _renderBrick(brick) {
     return html`
-      <p class="app-footer">
-        ${this.author}
-      </p>
-    `
+      <break-out-brick
+        id="${brick.id}"
+        x="${brick.x}"
+        y="${brick.y}"
+        w="${brick.w}"
+        h="${brick.h}"
+      ></break-out-brick>
+    `;
   }
 
   render() {
     return html`
-      ${this._headerTemplate}
-      ${this._gameTemplate}
-      ${this._footerTemplate}
+      ${this._headerTemplate} ${this._gameTemplate} ${this._footerTemplate}
     `;
   }
 }
